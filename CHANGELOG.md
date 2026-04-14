@@ -4,6 +4,12 @@ All notable changes to CV Manager will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.26.4] - 2026-04-14
+
+### Fixed
+- Date formatting now respects locale (uses Intl.DateTimeFormat with CLDR data instead of hardcoded English month names)
+- Fixed S12 interaction bug where default dataset would not render on public site (default dataset data is now injected directly into page HTML)
+
 ## [1.26.3] - 2026-04-03
 
 ### Fixed

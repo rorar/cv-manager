@@ -196,8 +196,9 @@ function servePublicIndex(req, res) {
                 html = html.replace('<head>', `<head>\n${trackingCode}`);
             }
             
-            // Inject default dataset slug (no DATASET_PREVIEW = no preview banner)
-            const datasetScript = `<script>window.DATASET_SLUG = "${escapeJsString(defaultDataset.slug)}";</script>`;
+            // Inject default dataset data directly — no client-side fetch needed
+            // (S12 fix: /api/datasets/slug/:slug requires is_public=1, but default datasets may not be public)
+            const datasetScript = `<script>window.DEFAULT_DATASET_DATA = ${JSON.stringify(data)};</script>`;
             html = html.replace('</head>', `${datasetScript}</head>`);
             
             return res.type('html').send(html);
@@ -731,6 +732,19 @@ if (!PUBLIC_ONLY) {
     } catch (err) { console.log('Auto-create default dataset:', err.message); }
 }
 
+// Cached locale for date formatting (re-read from DB on first use, thenMemoized)
+let _cachedLocale = null;
+function getLocale() {
+    if (_cachedLocale !== null) return _cachedLocale;
+    try {
+        const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+        _cachedLocale = row?.value || 'en';
+    } catch {
+        _cachedLocale = 'en';
+    }
+    return _cachedLocale;
+}
+
 function formatPeriod(startDate, endDate) {
     const start = startDate ? formatDateShort(startDate) : '';
     const end = endDate ? formatDateShort(endDate) : 'Present';
@@ -742,27 +756,50 @@ function formatDateShort(dateStr) {
     if (dateStr.match(/^\d{4}$/)) return dateStr;
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
-        const monthIdx = parseInt(m) - 1;
-        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        
+        const year = parseInt(y, 10);
+        const month = parseInt(m, 10);
+
         // Read date format setting from DB, default to MMM YYYY
         let fmt = 'MMM YYYY';
         try {
             const setting = db.prepare('SELECT value FROM settings WHERE key = ?').get('dateFormat');
             if (setting?.value) fmt = setting.value;
         } catch { /* use default */ }
-        
+
+        const locale = getLocale();
+        const date = new Date(year, month - 1, 1);
+
         switch (fmt) {
-            case 'MMMM YYYY': return `${monthsFull[monthIdx]} ${y}`;
-            case 'MMM YY': return `${monthsShort[monthIdx]} ${y.slice(-2)}`;
-            case 'MM/YYYY': return `${m}/${y}`;
-            case 'MM.YYYY': return `${m}.${y}`;
-            case 'MM-YYYY': return `${m}-${y}`;
-            case 'YYYY-MM': return `${y}-${m}`;
-            case 'YYYY': return y;
+            case 'MMMM YYYY': {
+                const f = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+                return f.format(date);
+            }
+            case 'MMM YY': {
+                const f = new Intl.DateTimeFormat(locale, { month: 'short', year: '2-digit' });
+                return f.format(date);
+            }
+            case 'MM/YYYY': {
+                const f = new Intl.DateTimeFormat(locale, { month: '2-digit', year: 'numeric' });
+                return f.format(date);
+            }
+            case 'MM.YYYY': {
+                const f = new Intl.DateTimeFormat(locale, { month: '2-digit', year: 'numeric' });
+                return f.format(date).replace(/\//g, '.');
+            }
+            case 'MM-YYYY': {
+                const f = new Intl.DateTimeFormat(locale, { month: '2-digit', year: 'numeric' });
+                return f.format(date).replace(/\//g, '-');
+            }
+            case 'YYYY-MM': {
+                const f = new Intl.DateTimeFormat(locale, { year: 'numeric', month: '2-digit' });
+                return f.format(date);
+            }
+            case 'YYYY': return String(year);
             case 'MMM YYYY':
-            default: return `${monthsShort[monthIdx]} ${y}`;
+            default: {
+                const f = new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric' });
+                return f.format(date);
+            }
         }
     }
     const yearMatch = dateStr.match(/(\d{4})/);

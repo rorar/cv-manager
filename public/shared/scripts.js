@@ -187,33 +187,40 @@ function formatDate(dateStr) {
     if (dateStr.match(/^\d{4}$/)) return dateStr;
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
-        const monthIdx = parseInt(m) - 1;
-        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        
-        switch (dateFormatSetting) {
-            case 'MMMM YYYY': return `${monthsFull[monthIdx]} ${y}`;
-            case 'MMM YY': return `${monthsShort[monthIdx]} ${y.slice(-2)}`;
-            case 'MM/YYYY': return `${m}/${y}`;
-            case 'MM.YYYY': return `${m}.${y}`;
-            case 'MM-YYYY': return `${m}-${y}`;
-            case 'YYYY-MM': return `${y}-${m}`;
-            case 'YYYY': return y;
-            case 'MMM YYYY':
-            default: return `${monthsShort[monthIdx]} ${y}`;
-        }
+        const year = parseInt(y);
+        const month = parseInt(m);
+        const locale = (typeof I18n !== 'undefined' && I18n.locale) ? I18n.locale : 'en';
+
+        const formatMap = {
+            'MMM YYYY': { month: 'short', year: 'numeric' },
+            'MMMM YYYY': { month: 'long', year: 'numeric' },
+            'MMM YY': { month: 'short', year: '2-digit' },
+            'MM/YYYY': { month: '2-digit', year: 'numeric' },
+            'MM.YYYY': { month: '2-digit', year: 'numeric' },
+            'MM-YYYY': { month: '2-digit', year: 'numeric' },
+            'YYYY-MM': { year: 'numeric', month: '2-digit' },
+            'YYYY': { year: 'numeric' }
+        };
+
+        // YYYY-MM needs manual construction since Intl uses locale-preferred order (MM/YYYY)
+        if (dateFormatSetting === 'YYYY-MM') return `${y}-${m}`;
+
+        const opts = formatMap[dateFormatSetting] || formatMap['MMM YYYY'];
+        return new Intl.DateTimeFormat(locale, opts).format(new Date(year, month - 1));
     }
     return dateStr;
 }
 
-// Format date for ATS - consistent format: "Mon YYYY" or "YYYY"
+// Format date for ATS - consistent format: "Month YYYY" or "YYYY"
 function formatDateATS(dateStr) {
     if (!dateStr) return '';
     if (dateStr.match(/^\d{4}$/)) return dateStr;
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
-        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        return `${months[parseInt(m)-1]} ${y}`;
+        const year = parseInt(y);
+        const month = parseInt(m);
+        const locale = (typeof I18n !== 'undefined' && I18n.locale) ? I18n.locale : 'en';
+        return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(new Date(year, month - 1));
     }
     return dateStr;
 }
