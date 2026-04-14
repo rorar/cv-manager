@@ -4,6 +4,11 @@ All notable changes to CV Manager will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.26.5] - 2026-04-14
+
+### Fixed
+- Fixed duplicate `/api/experiences` route definition with inconsistent SQL (missing `id` and `summary` fields), which caused CV entries to not render on the public frontend
+
 ## [1.26.4] - 2026-04-14
 
 ### Fixed
