@@ -4,6 +4,15 @@ All notable changes to CV Manager will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/), versioning follows [Semantic Versioning](https://semver.org/).
 
+## [1.27.0] - 2026-04-15
+
+### Added
+- Toggle in Settings > Print & Export to control whether ATS/PDF exports use translated section names and dates (default: on/localized). When off, exports always use English labels for ATS compatibility.
+
+### Changed
+- ATS PDF export now respects the user's language setting for section headings and dates (when localized toggle is on).
+- ATS text export uses translated section names via existing i18n keys.
+
 ## [1.26.6] - 2026-04-15
 
 ### Fixed
