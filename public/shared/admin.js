@@ -3149,10 +3149,8 @@ function toggleLanguagePicker() {
     if (!wasActive) renderLanguageGrid();
 }
 
-// Initialize date format options on page load
-document.addEventListener('DOMContentLoaded', () => {
-    updateDateFormatOptions();
-});
+// Update date format options when I18n is ready
+// This is called after I18n.init() completes in index.html
 
 // Render language selector grid
 function renderLanguageGrid() {
