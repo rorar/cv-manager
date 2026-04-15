@@ -3149,6 +3149,11 @@ function toggleLanguagePicker() {
     if (!wasActive) renderLanguageGrid();
 }
 
+// Initialize date format options on page load
+document.addEventListener('DOMContentLoaded', () => {
+    updateDateFormatOptions();
+});
+
 // Render language selector grid
 function renderLanguageGrid() {
     const container = document.getElementById('toolbarLanguageGrid');
@@ -3168,7 +3173,31 @@ function renderLanguageGrid() {
 async function selectLanguage(code) {
     await I18n.setLocale(code);
     renderLanguageGrid();
+    updateDateFormatOptions();
     document.getElementById('languagePickerDropdown').classList.remove('active');
+}
+
+// Update date format dropdown options with translated month names
+function updateDateFormatOptions() {
+    const select = document.getElementById('settingDateFormat');
+    if (!select) return;
+    
+    const locale = I18n?.locale || 'en';
+    const date = new Date(2024, 0, 1); // Jan 2024 example
+    const monthShort = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+    const monthLong = new Intl.DateTimeFormat(locale, { month: 'long' }).format(date);
+    
+    // Update MMM YYYY option
+    const mmmOption = select.querySelector('option[value="MMM YYYY"]');
+    if (mmmOption) mmmOption.textContent = `${monthShort} 2024`;
+    
+    // Update MMM YY option
+    const mmmyyOption = select.querySelector('option[value="MMM YY"]');
+    if (mmmyyOption) mmmyyOption.textContent = `${monthShort} 24`;
+    
+    // Update MMMM YYYY option
+    const mmmmOption = select.querySelector('option[value="MMMM YYYY"]');
+    if (mmmmOption) mmmmOption.textContent = `${monthLong} 2024`;
 }
 
 // Render custom sections list
