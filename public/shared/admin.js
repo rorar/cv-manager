@@ -2612,6 +2612,12 @@ async function saveSettingsSectionOrder() {
             showExperienceDuration = experienceDurationEl.checked;
         }
 
+        // Also save ATS localized setting
+        const atsLocalizedEl = document.getElementById('settingAtsLocalized');
+        if (atsLocalizedEl) {
+            await api('/api/settings/atsLocalized', { method: 'PUT', body: { value: atsLocalizedEl.checked.toString() } });
+        }
+
         // Also save robots meta
         const robotsMetaEl = document.getElementById('settingRobotsMeta');
         if (robotsMetaEl) {
