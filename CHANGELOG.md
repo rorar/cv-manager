@@ -7,7 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/), versioning follo
 ## [1.27.0] - 2026-04-15
 
 ### Added
-- Toggle in Settings > Print & Export to control whether ATS/PDF exports use translated section names and dates (default: on/localized). When off, exports always use English labels for ATS compatibility.
+- Toggle in Settings > Print & Export to control whether ATS/PDF exports use translated section names and dates (default: off/English). When on, exports use the user's selected language for ATS compatibility with non-English recruiters.
 - Dynamic hint text showing example translation for current language (e.g. "Work Experience becomes Berufserfahrung" in German).
 - Documentation for ATS language settings in all 8 languages.
 

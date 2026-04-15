@@ -2312,10 +2312,10 @@ async function loadPublicSettings() {
     const experienceDurationEl = document.getElementById('settingExperienceDuration');
     if (experienceDurationEl) experienceDurationEl.checked = experienceDurationSetting.value === 'true';
 
-    // Load ATS localized setting (default: enabled for localization)
+    // Load ATS localized setting (default: disabled for English ATS compatibility)
     const atsLocalizedSetting = await api('/api/settings/atsLocalized');
     const atsLocalizedEl = document.getElementById('settingAtsLocalized');
-    if (atsLocalizedEl) atsLocalizedEl.checked = atsLocalizedSetting.value !== 'false'; // default true
+    if (atsLocalizedEl) atsLocalizedEl.checked = atsLocalizedSetting.value === 'true'; // default false
     
     // Update ATS localized example text based on current language
     const atsExampleEl = document.getElementById('atsLocalizedExample');

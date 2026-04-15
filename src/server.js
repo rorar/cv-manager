@@ -1903,7 +1903,7 @@ if (PUBLIC_ONLY) {
             let i18n = {};
             try {
                 const atsLocalizedSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('atsLocalized');
-                useLocalized = atsLocalizedSetting?.value !== 'false'; // default true
+                useLocalized = atsLocalizedSetting?.value === 'true'; // default false (English for ATS compatibility)
                 if (useLocalized) {
                     const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
                     locale = langSetting?.value || 'en';
