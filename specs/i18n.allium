@@ -1,0 +1,69 @@
+-- Internationalization Module
+-- Manages locale, translations, and locale-aware formatting
+
+use "./cv.allium" as cv
+
+-- Locale-aware date formatting contract
+-- Single source of truth: Intl.DateTimeFormat (CLDR-backed)
+contract LocaleFormatter {
+    formatDate: (date: String, format: DateFormat, locale: Locale) -> String
+    formatPeriod: (start: String?, end: String?, locale: Locale) -> String
+}
+
+enum DateFormat {
+    MMM_YYYY        -- "Jan 2024"
+    MMMM_YYYY       -- "January 2024"
+    MMM_YY          -- "Jan 24"
+    MM_YYYY         -- "01/2024"
+    MM_DOT_YYYY     -- "01.2024"
+    MM_DASH_YYYY    -- "01-2024"
+    YYYY_MM_DASH    -- "2024-01"
+    YYYY_ONLY       -- "2024"
+    ATS             -- "January 2024" (full month, for ATS export)
+}
+
+-- Supported locales (ISO 639-1)
+enum Locale {
+    en | de | fr | nl | es | it | pt | zh
+}
+
+-- Module-level given: the active locale and formatter
+given {
+    active_locale: Locale           -- from I18n.locale (frontend) or DB setting (backend)
+    formatter: LocaleFormatter      -- implementation using Intl.DateTimeFormat
+}
+
+-- Date formatting rules
+
+rule FormatDisplayDate {
+    -- Formats a stored ISO date (YYYY or YYYY-MM) for display
+    -- Uses active_locale and user's preferred format setting
+    when: FormatDateRequest(date: String, format: DateFormat)
+    let formatted = formatter.formatDate(date, format, active_locale)
+    ensures: formatted
+}
+
+rule FormatCurrentPeriod {
+    -- When end_date is absent (null), displays "Present" translated to active_locale
+    when: FormatPeriodRequest(start: String, end: String?)
+    let end = end ?? "present"  -- "present" is the sentinel for current
+    let period = formatter.formatPeriod(start, end, active_locale)
+    ensures: period
+}
+
+rule NormalizeInputDate {
+    -- Parses flexible date input into canonical ISO format (YYYY-MM or YYYY)
+    -- Handles: YYYY-MM, YYYY, MMM YYYY, MMMM YYYY, MM/YYYY, etc.
+    -- Month name parsing uses active_locale for localized month names
+    when: NormalizeDateRequest(input: String)
+    let normalized = normalizeDate(input, active_locale)
+    ensures: normalized.value
+}
+
+-- Locale formatting invariant
+invariant DateFormattingUsesLocale {
+    -- All date display must use Intl.DateTimeFormat with the user's locale
+    -- No hardcoded month name arrays (Jan, February, etc.)
+    for date in cv/Dataset.timeline_items:
+        formatDate(date.start_date, MMM_YYYY, active_locale) != hardcoded_english
+}

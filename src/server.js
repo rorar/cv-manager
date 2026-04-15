@@ -698,26 +698,31 @@ function formatDateShort(dateStr) {
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
         const monthIdx = parseInt(m) - 1;
-        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const date = new Date(parseInt(y), monthIdx, 1);
         
-        // Read date format setting from DB, default to MMM YYYY
+        // Read date format and language settings from DB
         let fmt = 'MMM YYYY';
+        let locale = 'en';
         try {
-            const setting = db.prepare('SELECT value FROM settings WHERE key = ?').get('dateFormat');
-            if (setting?.value) fmt = setting.value;
-        } catch { /* use default */ }
+            const fmtSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('dateFormat');
+            if (fmtSetting?.value) fmt = fmtSetting.value;
+            const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+            if (langSetting?.value) locale = langSetting.value;
+        } catch { /* use defaults */ }
+        
+        const monthShort = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+        const monthLong = new Intl.DateTimeFormat(locale, { month: 'long' }).format(date);
         
         switch (fmt) {
-            case 'MMMM YYYY': return `${monthsFull[monthIdx]} ${y}`;
-            case 'MMM YY': return `${monthsShort[monthIdx]} ${y.slice(-2)}`;
+            case 'MMMM YYYY': return `${monthLong} ${y}`;
+            case 'MMM YY': return `${monthShort} ${y.slice(-2)}`;
             case 'MM/YYYY': return `${m}/${y}`;
             case 'MM.YYYY': return `${m}.${y}`;
             case 'MM-YYYY': return `${m}-${y}`;
             case 'YYYY-MM': return `${y}-${m}`;
             case 'YYYY': return y;
             case 'MMM YYYY':
-            default: return `${monthsShort[monthIdx]} ${y}`;
+            default: return `${monthShort} ${y}`;
         }
     }
     const yearMatch = dateStr.match(/(\d{4})/);
@@ -1906,8 +1911,15 @@ if (PUBLIC_ONLY) {
                 if (/^\d{4}$/.test(dateStr)) return dateStr;
                 if (/^\d{4}-\d{2}$/.test(dateStr)) {
                     const [y, m] = dateStr.split('-');
-                    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                    return `${months[parseInt(m) - 1]} ${y}`;
+                    const monthIdx = parseInt(m) - 1;
+                    const date = new Date(parseInt(y), monthIdx, 1);
+                    // Get language from settings, default to 'en'
+                    let locale = 'en';
+                    try {
+                        const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+                        if (langSetting?.value) locale = langSetting.value;
+                    } catch { /* use default */ }
+                    return `${new Intl.DateTimeFormat(locale, { month: 'short' }).format(date)} ${y}`;
                 }
                 return dateStr;
             }
