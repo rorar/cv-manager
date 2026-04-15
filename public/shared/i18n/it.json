@@ -376,6 +376,8 @@
     "ats.generate_failed": "Impossibile generare il documento ATS",
     "ats.downloaded": "Documento ATS scaricato",
     "ats.what_is": "Cos'è l'esportazione ATS?",
+    "ats.personal_info": "Informazioni personali",
+    "ats.skills": "Competenze",
 
     "present": "Presente",
     "loading": "Caricamento...",

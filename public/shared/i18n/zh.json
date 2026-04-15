@@ -376,6 +376,8 @@
     "ats.generate_failed": "生成 ATS 文档失败",
     "ats.downloaded": "ATS 文档已下载",
     "ats.what_is": "什么是 ATS 导出？",
+    "ats.personal_info": "个人信息",
+    "ats.skills": "技能",
 
     "present": "至今",
     "loading": "加载中...",

@@ -1281,8 +1281,11 @@ async function generateATSContent() {
     
     let ats = [];
     
+    // Helper to create uppercase section heading from i18n key
+    const atsSection = (key) => `=== ${t(key).toUpperCase()} ===`;
+    
     // Header section - clear labels for ATS field mapping
-    ats.push('=== PERSONAL INFORMATION ===');
+    ats.push(atsSection('ats.personal_info'));
     ats.push(`Full Name: ${p.name || ''}`);
     if (p.title) ats.push(`Job Title: ${p.title}`);
     if (p.location) ats.push(`Location: ${p.location}`);
@@ -1294,14 +1297,14 @@ async function generateATSContent() {
     
     // Professional Summary
     if (p.bio) {
-        ats.push('=== PROFESSIONAL SUMMARY ===');
+        ats.push(atsSection('section.about'));
         ats.push(p.bio.replace(/\n+/g, ' ').trim());
         ats.push('');
     }
     
     // Skills - critical for ATS keyword matching
     if (cv.skills && cv.skills.length > 0) {
-        ats.push('=== SKILLS ===');
+        ats.push(atsSection('ats.skills'));
         cv.skills
             .filter(cat => cat.visible !== false)
             .forEach(cat => {
@@ -1318,7 +1321,7 @@ async function generateATSContent() {
     
     // Work Experience - structured format for ATS
     if (cv.experiences && cv.experiences.length > 0) {
-        ats.push('=== WORK EXPERIENCE ===');
+        ats.push(atsSection('section.experience'));
         cv.experiences
             .filter(exp => exp.visible !== false)
             .forEach(exp => {
@@ -1338,7 +1341,7 @@ async function generateATSContent() {
     
     // Education - structured format
     if (cv.education && cv.education.length > 0) {
-        ats.push('=== EDUCATION ===');
+        ats.push(atsSection('section.education'));
         cv.education
             .filter(edu => edu.visible !== false)
             .forEach(edu => {
@@ -1353,7 +1356,7 @@ async function generateATSContent() {
     
     // Certifications - structured format
     if (cv.certifications && cv.certifications.length > 0) {
-        ats.push('=== CERTIFICATIONS ===');
+        ats.push(atsSection('section.certifications'));
         cv.certifications
             .filter(cert => cert.visible !== false)
             .forEach(cert => {
@@ -1367,7 +1370,7 @@ async function generateATSContent() {
     
     // Projects - structured format
     if (cv.projects && cv.projects.length > 0) {
-        ats.push('=== PROJECTS ===');
+        ats.push(atsSection('section.projects'));
         cv.projects
             .filter(proj => proj.visible !== false)
             .forEach(proj => {

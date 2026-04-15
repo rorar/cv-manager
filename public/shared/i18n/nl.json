@@ -376,6 +376,8 @@
     "ats.generate_failed": "ATS-document kon niet worden gegenereerd",
     "ats.downloaded": "ATS-document gedownload",
     "ats.what_is": "Wat is ATS-export?",
+    "ats.personal_info": "Persoonlijke gegevens",
+    "ats.skills": "Vaardigheden",
 
     "present": "Heden",
     "loading": "Laden...",

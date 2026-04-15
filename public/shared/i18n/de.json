@@ -395,6 +395,8 @@
     "ats.generate_failed": "ATS-Dokument konnte nicht erstellt werden",
     "ats.downloaded": "ATS-Dokument heruntergeladen",
     "ats.what_is": "Was ist ATS-Export?",
+    "ats.personal_info": "Persönliche Daten",
+    "ats.skills": "Fähigkeiten",
 
     "present": "Aktuell",
     "loading": "Laden...",
