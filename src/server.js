@@ -1897,6 +1897,17 @@ if (PUBLIC_ONLY) {
             const { scale = 1, paperSize = 'A4' } = req.body || {};
             const s = Math.max(0.5, Math.min(1.5, parseFloat(scale) || 1));
 
+            // Load i18n translations for the user's language
+            let i18n = {};
+            try {
+                const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+                const lang = langSetting?.value || 'en';
+                const i18nPath = path.join(__dirname, '../public/shared/i18n', `${lang}.json`);
+                if (fs.existsSync(i18nPath)) {
+                    i18n = JSON.parse(fs.readFileSync(i18nPath, 'utf8'));
+                }
+            } catch (e) { /* use defaults */ }
+
             const cvData = gatherCvData();
             const p = cvData.profile || {};
             const sectionOrder = cvData.sectionOrder || [];
@@ -1906,8 +1917,15 @@ if (PUBLIC_ONLY) {
                 if (/^\d{4}$/.test(dateStr)) return dateStr;
                 if (/^\d{4}-\d{2}$/.test(dateStr)) {
                     const [y, m] = dateStr.split('-');
-                    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                    return `${months[parseInt(m) - 1]} ${y}`;
+                    const monthIdx = parseInt(m) - 1;
+                    const date = new Date(parseInt(y), monthIdx, 1);
+                    // Get language from settings, default to 'en'
+                    let locale = 'en';
+                    try {
+                        const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+                        if (langSetting?.value) locale = langSetting.value;
+                    } catch { /* use default */ }
+                    return `${new Intl.DateTimeFormat(locale, { month: 'short' }).format(date)} ${y}`;
                 }
                 return dateStr;
             }
@@ -1915,6 +1933,8 @@ if (PUBLIC_ONLY) {
             function getSectionName(key) {
                 const orderEntry = sectionOrder.find(s => s.key === key);
                 if (orderEntry && orderEntry.display_name) return orderEntry.display_name;
+                // Use i18n translation if available, fallback to SECTION_DISPLAY_NAMES
+                if (i18n[`section.${key}`]) return i18n[`section.${key}`];
                 if (SECTION_DISPLAY_NAMES[key]) return SECTION_DISPLAY_NAMES[key];
                 if (orderEntry && orderEntry.name) return orderEntry.name;
                 const cs = (cvData.customSections || []).find(s => s.section_key === key);
