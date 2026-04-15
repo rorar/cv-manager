@@ -199,19 +199,22 @@ function formatDate(dateStr) {
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
         const monthIdx = parseInt(m) - 1;
-        const monthsShort = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const monthsFull = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const date = new Date(parseInt(y), monthIdx, 1);
+        const locale = I18n?.locale || 'en';
+        
+        const monthShort = new Intl.DateTimeFormat(locale, { month: 'short' }).format(date);
+        const monthLong = new Intl.DateTimeFormat(locale, { month: 'long' }).format(date);
         
         switch (dateFormatSetting) {
-            case 'MMMM YYYY': return `${monthsFull[monthIdx]} ${y}`;
-            case 'MMM YY': return `${monthsShort[monthIdx]} ${y.slice(-2)}`;
+            case 'MMMM YYYY': return `${monthLong} ${y}`;
+            case 'MMM YY': return `${monthShort} ${y.slice(-2)}`;
             case 'MM/YYYY': return `${m}/${y}`;
             case 'MM.YYYY': return `${m}.${y}`;
             case 'MM-YYYY': return `${m}-${y}`;
             case 'YYYY-MM': return `${y}-${m}`;
             case 'YYYY': return y;
             case 'MMM YYYY':
-            default: return `${monthsShort[monthIdx]} ${y}`;
+            default: return `${monthShort} ${y}`;
         }
     }
     return dateStr;
@@ -223,8 +226,10 @@ function formatDateATS(dateStr) {
     if (dateStr.match(/^\d{4}$/)) return dateStr;
     if (dateStr.match(/^\d{4}-\d{2}$/)) {
         const [y, m] = dateStr.split('-');
-        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        return `${months[parseInt(m)-1]} ${y}`;
+        const monthIdx = parseInt(m) - 1;
+        const date = new Date(parseInt(y), monthIdx, 1);
+        const monthLong = new Intl.DateTimeFormat(I18n?.locale || 'en', { month: 'long' }).format(date);
+        return `${monthLong} ${y}`;
     }
     return dateStr;
 }

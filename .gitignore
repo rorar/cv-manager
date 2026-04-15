@@ -5,3 +5,13 @@ docker-compose.unraid.yml
 docker-compose.yml
 /node_modules
 /site
+
+# Pi agent files
+/.pi/
+/.pi-lens/
+/.codex
+/.feature-dev
+/.full-review
+/.full-review-archive
+/.full-stack-feature
+/.full-stack-feature-archive

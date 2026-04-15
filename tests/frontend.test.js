@@ -376,7 +376,10 @@ describe('Frontend files', () => {
             // Extract formatDateATS function
             const formatDateATSMatch = scriptsContent.match(/function formatDateATS\(dateStr\)\s*\{[\s\S]*?^}/m);
             assert.ok(formatDateATSMatch, 'Should find formatDateATS function');
-            formatDateATS = new Function('dateStr', formatDateATSMatch[0].replace(/^function formatDateATS\(dateStr\)\s*\{/, '').replace(/\}$/, ''));
+            formatDateATS = new Function('dateStr', `
+                const I18n = { locale: 'en' };
+                ${formatDateATSMatch[0].replace(/^function formatDateATS\(dateStr\)\s*\{/, '').replace(/\}$/, '')}
+            `);
 
             // Extract parseDateForSort function
             const parseDateForSortMatch = scriptsContent.match(/function parseDateForSort\(dateStr\)\s*\{[\s\S]*?^}/m);
@@ -388,10 +391,14 @@ describe('Frontend files', () => {
             assert.ok(materialIconMatch, 'Should find materialIcon function');
             materialIcon = new Function('name', 'size', `size = size || 16; ${materialIconMatch[0].replace(/^function materialIcon\(name, size = 16\)\s*\{/, '').replace(/\}$/, '')}`);
 
-            // For formatDate, create a closure with dateFormatSetting
+            // For formatDate, create a closure with dateFormatSetting and mock I18n
             const createFormatDate = (setting) => {
                 const body = formatDateMatch[0].replace(/^function formatDate\(dateStr\)\s*\{/, '').replace(/\}$/, '');
-                return new Function('dateStr', `const dateFormatSetting = ${JSON.stringify(setting)}; ${body}`);
+                return new Function('dateStr', `
+                    const dateFormatSetting = ${JSON.stringify(setting)};
+                    const I18n = { locale: 'en' };
+                    ${body}
+                `);
             };
             formatDate = createFormatDate; // Store factory function
 
