@@ -2312,6 +2312,11 @@ async function loadPublicSettings() {
     const experienceDurationEl = document.getElementById('settingExperienceDuration');
     if (experienceDurationEl) experienceDurationEl.checked = experienceDurationSetting.value === 'true';
 
+    // Load ATS localized setting (default: enabled for localization)
+    const atsLocalizedSetting = await api('/api/settings/atsLocalized');
+    const atsLocalizedEl = document.getElementById('settingAtsLocalized');
+    if (atsLocalizedEl) atsLocalizedEl.checked = atsLocalizedSetting.value !== 'false'; // default true
+
     // Load robots meta setting
     const robotsMeta = await api('/api/settings/robotsMeta');
     const robotsEl = document.getElementById('settingRobotsMeta');

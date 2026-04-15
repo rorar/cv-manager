@@ -1897,14 +1897,20 @@ if (PUBLIC_ONLY) {
             const { scale = 1, paperSize = 'A4' } = req.body || {};
             const s = Math.max(0.5, Math.min(1.5, parseFloat(scale) || 1));
 
-            // Load i18n translations for the user's language
+            // Check if ATS export should use localized text
+            let useLocalized = true;
+            let locale = 'en';
             let i18n = {};
             try {
-                const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
-                const lang = langSetting?.value || 'en';
-                const i18nPath = path.join(__dirname, '../public/shared/i18n', `${lang}.json`);
-                if (fs.existsSync(i18nPath)) {
-                    i18n = JSON.parse(fs.readFileSync(i18nPath, 'utf8'));
+                const atsLocalizedSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('atsLocalized');
+                useLocalized = atsLocalizedSetting?.value !== 'false'; // default true
+                if (useLocalized) {
+                    const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
+                    locale = langSetting?.value || 'en';
+                    const i18nPath = path.join(__dirname, '../public/shared/i18n', `${locale}.json`);
+                    if (fs.existsSync(i18nPath)) {
+                        i18n = JSON.parse(fs.readFileSync(i18nPath, 'utf8'));
+                    }
                 }
             } catch (e) { /* use defaults */ }
 
@@ -1919,12 +1925,6 @@ if (PUBLIC_ONLY) {
                     const [y, m] = dateStr.split('-');
                     const monthIdx = parseInt(m) - 1;
                     const date = new Date(parseInt(y), monthIdx, 1);
-                    // Get language from settings, default to 'en'
-                    let locale = 'en';
-                    try {
-                        const langSetting = db.prepare('SELECT value FROM settings WHERE key = ?').get('language');
-                        if (langSetting?.value) locale = langSetting.value;
-                    } catch { /* use default */ }
                     return `${new Intl.DateTimeFormat(locale, { month: 'short' }).format(date)} ${y}`;
                 }
                 return dateStr;
@@ -1933,8 +1933,8 @@ if (PUBLIC_ONLY) {
             function getSectionName(key) {
                 const orderEntry = sectionOrder.find(s => s.key === key);
                 if (orderEntry && orderEntry.display_name) return orderEntry.display_name;
-                // Use i18n translation if available, fallback to SECTION_DISPLAY_NAMES
-                if (i18n[`section.${key}`]) return i18n[`section.${key}`];
+                // Use i18n translation if enabled and available, fallback to SECTION_DISPLAY_NAMES
+                if (useLocalized && i18n[`section.${key}`]) return i18n[`section.${key}`];
                 if (SECTION_DISPLAY_NAMES[key]) return SECTION_DISPLAY_NAMES[key];
                 if (orderEntry && orderEntry.name) return orderEntry.name;
                 const cs = (cvData.customSections || []).find(s => s.section_key === key);
