@@ -1495,6 +1495,13 @@
     line-height: 1.4;
 }
 
+.settings-option-hint {
+    font-size: 11px;
+    color: var(--gray-400);
+    font-style: italic;
+    margin-top: 2px;
+}
+
 /* Settings Sub-Option (indented) */
 .settings-sub-option {
     margin-left: 16px;

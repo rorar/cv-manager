@@ -29,6 +29,20 @@ Para além da otimização web integrada, o CV Manager pode gerar um **PDF dedic
 4. Pré-visualize o documento na janela modal
 5. Clique em **Baixar PDF** para guardar o ficheiro
 
+### Definições de idioma
+
+!!! note "Esta definição afeta apenas o idioma da interface de administração"
+    A definição de **Idioma** (na barra de ferramentas) controla o idioma da interface do CV Manager — não altera o idioma do conteúdo do seu CV.
+
+Por predefinição, a exportação do documento ATS utiliza **cabeçalhos de secção traduzidos** (por exemplo, "Work Experience" torna-se "Experiência Profissional" em português). Isto ajuda os recrutadores que podem não falar inglês.
+
+No entanto, alguns sistemas ATS funcionam melhor com **conteúdo apenas em inglês**. Pode desativar a localização em **Definições → Imprimir e Exportar → Exportação ATS: Localizada**.
+
+| Definição | Nomes das secções | Datas |
+|-----------|-------------------|-------|
+| **Ativado (predefinição)** | Traduzido para o idioma da interface | Formatado conforme a definição de data |
+| **Desativado** | Apenas inglês | Formatado conforme a definição de data |
+
 ### Diferença em relação a Imprimir / PDF
 
 | Funcionalidade | Imprimir / PDF | Documento ATS |

@@ -29,6 +29,20 @@ Zusätzlich zur integrierten Web-Optimierung kann CV Manager ein **dediziertes A
 4. Sehen Sie sich die Vorschau des Dokuments im Modal an
 5. Klicken Sie auf **PDF herunterladen**, um die Datei zu speichern
 
+### Spracheinstellungen
+
+!!! note "Diese Einstellung betrifft nur die Sprache der Admin-Oberfläche"
+    Die **Sprache**-Einstellung (in der Symbolleiste) steuert die Sprache der CV Manager-Oberfläche — sie ändert nicht die Sprache Ihrer Lebenslauf-Inhalte.
+
+Standardmäßig verwendet der ATS-Dokument-Export **übersetzte Abschnittsüberschriften** (z.B. "Work Experience" wird zu "Berufserfahrung" bei Deutsch). Dies hilft Personalvermittlern, die möglicherweise kein Englisch beherrschen.
+
+Einige ATS-Systeme funktionieren jedoch besser mit **nur Englisch**. Sie können die Lokalisierung in **Einstellungen → Drucken & Exportieren → ATS-Export: Lokalisiert** deaktivieren.
+
+| Einstellung | Abschnittsnamen | Daten |
+|-------------|----------------|-------|
+| **An (Standard)** | Übersetzt in die UI-Sprache | Formatiert nach Datumseinstellung |
+| **Aus** | Nur Englisch | Formatiert nach Datumseinstellung |
+
 ### Unterschied zu Drucken / PDF
 
 | Funktion | Drucken / PDF | ATS-Dokument |

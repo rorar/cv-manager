@@ -2316,6 +2316,12 @@ async function loadPublicSettings() {
     const atsLocalizedSetting = await api('/api/settings/atsLocalized');
     const atsLocalizedEl = document.getElementById('settingAtsLocalized');
     if (atsLocalizedEl) atsLocalizedEl.checked = atsLocalizedSetting.value !== 'false'; // default true
+    
+    // Update ATS localized example text based on current language
+    const atsExampleEl = document.getElementById('atsLocalizedExample');
+    if (atsExampleEl) {
+        atsExampleEl.textContent = I18n.locale === 'en' ? t('settings.print.ats_localized_example_en') : t('settings.print.ats_localized_example');
+    }
 
     // Load robots meta setting
     const robotsMeta = await api('/api/settings/robotsMeta');

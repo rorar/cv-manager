@@ -29,6 +29,20 @@ In addition to the built-in web optimization, CV Manager can generate a **dedica
 4. Preview the document in the modal
 5. Click **Download PDF** to save the file
 
+### Language Settings
+
+!!! note "This setting only affects the admin interface language"
+    The **Language** setting (in the toolbar) controls the CV Manager interface language — it does not change the language of your CV content itself.
+
+By default, the ATS Document export uses **translated section headings** (e.g., "Work Experience" becomes "Berufserfahrung" when German is selected). This helps recruiters who may not be fluent in English.
+
+However, some ATS systems work better with **English-only** content. You can disable localization in **Settings → Print & Export → ATS Export: Localized**.
+
+| Setting | Section Names | Dates |
+|---------|--------------|-------|
+| **On (default)** | Translated to UI language | Formatted per date setting |
+| **Off** | English only | Formatted per date setting |
+
 ### What Makes It Different from Print / PDF?
 
 | Feature | Print / PDF | ATS Document |

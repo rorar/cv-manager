@@ -29,6 +29,20 @@ Naast de ingebouwde weboptimalisatie kan CV Manager een **speciaal ATS-vriendeli
 4. Bekijk het document in het modale venster
 5. Klik op **PDF downloaden** om het bestand op te slaan
 
+### Taalinstellingen
+
+!!! note "Deze instelling heeft alleen betrekking op de taal van de beheerinterface"
+    De **Taal**-instelling (in de werkbalk) bepaalt de taal van de CV Manager-interface — het wijzigt niet de taal van uw CV-inhoud.
+
+Standaard gebruikt het ATS-document export **vertaalde sectiekoppen** (bijv. "Work Experience" wordt "Werkervaring" in het Nederlands). Dit helpt recruiters die mogelijk geen Engels spreken.
+
+Sommige ATS-systemen werken echter beter met **alleen Engels**. U kunt localisatie uitschakelen in **Instellingen → Afdrukken en Exporteren → ATS-export: Gelokaliseerd**.
+
+| Instelling | Sectienamen | Data |
+|------------|-------------|-------|
+| **Aan (standaard)** | Vertaald naar de interface-taal | Geformatteerd per datuminstelling |
+| **Uit** | Alleen Engels | Geformatteerd per datuminstelling |
+
 ### Verschil met Afdrukken / PDF
 
 | Functie | Afdrukken / PDF | ATS-document |
